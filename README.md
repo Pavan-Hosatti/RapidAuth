@@ -46,7 +46,7 @@ Deployed backend link:
 
 # 🎥 LinkedIn Demo Video URL
 
-https://www.linkedin.com/posts/your-organization/rapidauth-demo
+[https://www.linkedin.com/posts/your-organization/rapidauth-demo](https://www.linkedin.com/posts/kirthi-jc-5390b8310_algorand-blockchain-hackathon-activity-7430438559108591616-o1fX?utm_source=share&utm_medium=member_desktop&rcm=ACoAAE8Jc_0BdkNohj9rAORVrI-zgYlOtl6x5DE)
 
 ---
 
