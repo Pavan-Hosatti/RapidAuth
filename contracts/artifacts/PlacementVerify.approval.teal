@@ -1,0 +1,343 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2
+    bytecblock "claims_data" "next_claim_id" "|" "admin" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/placementverify/contract.py:8
+    // self.admin = Global.creator_address
+    bytec_3 // "admin"
+    global CreatorAddress
+    app_global_put
+    // smart_contracts/placementverify/contract.py:9
+    // self.next_claim_id = UInt64(1)
+    bytec_1 // "next_claim_id"
+    intc_1 // 1
+    app_global_put
+    // smart_contracts/placementverify/contract.py:10
+    // self.claims_data = String("")
+    bytec_0 // "claims_data"
+    pushbytes ""
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/placementverify/contract.py:5
+    // class PlacementVerify(ARC4Contract):
+    txn NumAppArgs
+    bz main___algopy_default_create@13
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xa9a5dfe3 0x2c1a3e00 0x2a71bfc7 0x11275612 // method "issue_claim(string,string,string,string,string)uint64", method "revoke_claim(uint64)void", method "get_all_claims()string", method "get_next_claim_id()uint64"
+    txna ApplicationArgs 0
+    match issue_claim revoke_claim get_all_claims get_next_claim_id
+    err
+
+main___algopy_default_create@13:
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return
+
+
+// smart_contracts.placementverify.contract.PlacementVerify.issue_claim[routing]() -> void:
+issue_claim:
+    // smart_contracts/placementverify/contract.py:12-15
+    // # =========================
+    // # ISSUE CLAIM (ADMIN ONLY)
+    // # =========================
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 3
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 4
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 5
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/placementverify/contract.py:25
+    // assert Txn.sender == self.admin
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert
+    // smart_contracts/placementverify/contract.py:27
+    // claim_id = self.next_claim_id
+    intc_0 // 0
+    bytec_1 // "next_claim_id"
+    app_global_get_ex
+    assert // check self.next_claim_id exists
+    // smart_contracts/placementverify/contract.py:31-32
+    // student
+    // + String("|")
+    uncover 5
+    // smart_contracts/placementverify/contract.py:32
+    // + String("|")
+    bytec_2 // "|"
+    // smart_contracts/placementverify/contract.py:31-32
+    // student
+    // + String("|")
+    concat
+    // smart_contracts/placementverify/contract.py:31-33
+    // student
+    // + String("|")
+    // + claim_type
+    uncover 5
+    concat
+    // smart_contracts/placementverify/contract.py:34
+    // + String("|")
+    bytec_2 // "|"
+    // smart_contracts/placementverify/contract.py:31-34
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    concat
+    // smart_contracts/placementverify/contract.py:31-35
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    uncover 4
+    concat
+    // smart_contracts/placementverify/contract.py:36
+    // + String("|")
+    bytec_2 // "|"
+    // smart_contracts/placementverify/contract.py:31-36
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    // + String("|")
+    concat
+    // smart_contracts/placementverify/contract.py:31-37
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    // + String("|")
+    // + issuer
+    uncover 3
+    concat
+    // smart_contracts/placementverify/contract.py:38
+    // + String("|")
+    bytec_2 // "|"
+    // smart_contracts/placementverify/contract.py:31-38
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    // + String("|")
+    // + issuer
+    // + String("|")
+    concat
+    // smart_contracts/placementverify/contract.py:31-39
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    // + String("|")
+    // + issuer
+    // + String("|")
+    // + issue_date
+    uncover 2
+    concat
+    // smart_contracts/placementverify/contract.py:40
+    // + String("|ACTIVE|TRUE#")
+    pushbytes "|ACTIVE|TRUE#"
+    // smart_contracts/placementverify/contract.py:31-40
+    // student
+    // + String("|")
+    // + claim_type
+    // + String("|")
+    // + claim_value
+    // + String("|")
+    // + issuer
+    // + String("|")
+    // + issue_date
+    // + String("|ACTIVE|TRUE#")
+    concat
+    // smart_contracts/placementverify/contract.py:43
+    // self.claims_data = self.claims_data + new_claim
+    intc_0 // 0
+    bytec_0 // "claims_data"
+    app_global_get_ex
+    assert // check self.claims_data exists
+    swap
+    concat
+    bytec_0 // "claims_data"
+    swap
+    app_global_put
+    // smart_contracts/placementverify/contract.py:45
+    // self.next_claim_id = claim_id + UInt64(1)
+    dup
+    intc_1 // 1
+    +
+    bytec_1 // "next_claim_id"
+    swap
+    app_global_put
+    // smart_contracts/placementverify/contract.py:12-15
+    // # =========================
+    // # ISSUE CLAIM (ADMIN ONLY)
+    // # =========================
+    // @arc4.abimethod
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.placementverify.contract.PlacementVerify.revoke_claim[routing]() -> void:
+revoke_claim:
+    // smart_contracts/placementverify/contract.py:49-52
+    // # =========================
+    // # REVOKE CLAIM (ADMIN ONLY)
+    // # =========================
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    // smart_contracts/placementverify/contract.py:58
+    // assert Txn.sender == self.admin
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert
+    // smart_contracts/placementverify/contract.py:60-61
+    // # For MVP: append revoke log
+    // self.claims_data = self.claims_data + String("REVOKED#")
+    intc_0 // 0
+    bytec_0 // "claims_data"
+    app_global_get_ex
+    assert // check self.claims_data exists
+    pushbytes "REVOKED#"
+    concat
+    bytec_0 // "claims_data"
+    swap
+    app_global_put
+    // smart_contracts/placementverify/contract.py:49-52
+    // # =========================
+    // # REVOKE CLAIM (ADMIN ONLY)
+    // # =========================
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// smart_contracts.placementverify.contract.PlacementVerify.get_all_claims[routing]() -> void:
+get_all_claims:
+    // smart_contracts/placementverify/contract.py:68
+    // return self.claims_data
+    intc_0 // 0
+    bytec_0 // "claims_data"
+    app_global_get_ex
+    assert // check self.claims_data exists
+    // smart_contracts/placementverify/contract.py:63-66
+    // # =========================
+    // # GET ALL CLAIMS
+    // # =========================
+    // @arc4.abimethod(readonly=True)
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.placementverify.contract.PlacementVerify.get_next_claim_id[routing]() -> void:
+get_next_claim_id:
+    // smart_contracts/placementverify/contract.py:75
+    // return self.next_claim_id
+    intc_0 // 0
+    bytec_1 // "next_claim_id"
+    app_global_get_ex
+    assert // check self.next_claim_id exists
+    // smart_contracts/placementverify/contract.py:70-73
+    // # =========================
+    // # GET NEXT CLAIM ID
+    // # =========================
+    // @arc4.abimethod(readonly=True)
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
