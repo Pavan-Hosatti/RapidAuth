@@ -282,18 +282,32 @@ const ContractCaller = ({ address, students, onClaimIssued, issuers, claims, onR
                                                 const currentClaimId = claim.id;
                                                 if (window.confirm(`Revoke this record on-chain?\nReason: ${reason}`)) {
                                                     setLoading(true);
-                                                    setResult(`⛓️ Preparing on-chain revocation...`);
+                                                    setResult(`⛓️ Preparing on-chain revocation anchor...`);
                                                     try {
-                                                        const txns = await BlockchainService.prepareContractCall(address, APP_ID, 'revoke_claim', [0]);
-                                                        const signers = txns.map(txn => ({ txn, signers: [address] }));
-                                                        const signedTxns = await peraWallet.signTransaction([signers]);
-                                                        const confirmedTxId = await BlockchainService.sendTransaction(signedTxns);
+                                                        // HIGH-CAPACITY ANCHORING: Using Payment Notes for Revocation
+                                                        // This ensures success even when the Smart Contract storage is full.
+                                                        const txn = await BlockchainService.prepareAssetTransaction(
+                                                            address,
+                                                            "REVOKED", // Sentinel hash to indicate revocation
+                                                            {
+                                                                type: "REVOKE",
+                                                                id: currentClaimId,
+                                                                reason: reason,
+                                                                target: claim.txId // Tie it to the original issuance transaction
+                                                            }
+                                                        );
+
+                                                        setResult('📱 Approve on Pera Wallet...');
+                                                        const signedTxn = await peraWallet.signTransaction([[{ txn, signers: [address] }]]);
+                                                        const confirmedTxId = await BlockchainService.sendTransaction(signedTxn[0]);
+
                                                         if (confirmedTxId) {
                                                             await BlockchainService.waitForConfirmation(confirmedTxId);
                                                             onRevoke(currentClaimId, reason);
-                                                            setResult(`✅ Revoked on Algorand! Tx: ${confirmedTxId.slice(0, 8)}...`);
+                                                            setResult(`✅ Revocation anchored on Algorand! Tx: ${confirmedTxId.slice(0, 8)}...`);
                                                         }
                                                     } catch (err) {
+                                                        console.error('Revocation failed:', err);
                                                         setResult(`❌ Revocation failed: ${err.message}`);
                                                     } finally {
                                                         setLoading(false);
